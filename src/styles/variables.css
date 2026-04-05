@@ -1,0 +1,30 @@
+:root {
+  --void: #04050a;
+  --abyss: #080c14;
+  --deep: #0f1520;
+  --navy: #1a2035;
+
+  --b1: #2F3A5A;
+  --b2: #3B3F63;
+  --b3: #4F5D8C;
+  --b4: #3A7FA3;
+
+  --teal: #3A7FA3;
+  --teal2: #A7D8F0;
+  --pink: #F59BB0;
+  --pink2: rgba(245, 155, 176, 0.15);
+
+  --white: #e8f2f8;
+  --wdim: rgba(220, 238, 250, 0.5);
+  --wfaint: rgba(220, 238, 250, 0.08);
+
+  --glass: rgba(15, 25, 45, 0.6);
+  --water: rgba(30, 50, 90, 0.55);
+
+  --serif: 'Noto Serif JP', serif;
+  --mono: 'Space Mono', monospace;
+  --ship: 'Shippori Mincho', serif;
+
+  --inner-max: 1060px;
+  --section-pad: 7rem;
+}
