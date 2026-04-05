@@ -1,0 +1,131 @@
+---
+---
+
+<section id="cierre">
+  <canvas id="closingCanvas"></canvas>
+  <div class="closing-inner">
+    <p class="cl-jp reveal" id="cj">ありがとう</p>
+    <p class="cl-sub reveal" id="cs">Gracias &nbsp;·&nbsp; Thank you &nbsp;·&nbsp; ありがとう</p>
+    <div class="cl-langs reveal" id="cl">
+      <div class="cl-lang">
+        <strong>Español</strong>
+        Tu voz nos cambió la vida.<br />Gracias por existir, Ado.
+      </div>
+      <div class="cl-lang">
+        <strong>English</strong>
+        Your voice changed our lives.<br />Thank you for existing, Ado.
+      </div>
+      <div class="cl-lang">
+        <strong>日本語</strong>
+        あなたの声が私たちの人生を変えました。<br />存在してくれてありがとう、アド。
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  (function () {
+    const cv = document.getElementById('closingCanvas') as HTMLCanvasElement;
+    if (!cv) return;
+    const ctx = cv.getContext('2d')!;
+    let W: number, H: number;
+    interface B { x: number; y: number; r: number; a: number; s: number; t: number; }
+    let bubbles: B[] = [];
+
+    function resize() {
+      W = cv.width = cv.offsetWidth;
+      H = cv.height = cv.offsetHeight;
+    }
+    function spawn(): B {
+      return { x: Math.random() * W, y: H + 40, r: 4 + Math.random() * 20, a: .05 + Math.random() * .12, s: .2 + Math.random() * .5, t: 0 };
+    }
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+      bubbles.forEach((b, i) => {
+        b.t += .01; b.y -= b.s; b.x += Math.sin(b.t) * .5;
+        ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(167,216,240,${b.a})`; ctx.lineWidth = .8; ctx.stroke();
+        if (b.y + b.r < 0) bubbles[i] = spawn();
+      });
+      requestAnimationFrame(draw);
+    }
+    resize();
+    for (let i = 0; i < 20; i++) { const b = spawn(); b.y = Math.random() * H; bubbles.push(b); }
+    window.addEventListener('resize', resize);
+    draw();
+  })();
+</script>
+
+<style>
+  #cierre {
+    background: linear-gradient(to bottom, var(--abyss), var(--void));
+    text-align: center;
+    padding: 10rem 0;
+    position: relative;
+    overflow: hidden;
+  }
+  #cierre::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-top: 1px solid rgba(58,127,163,.15);
+    border-bottom: 1px solid rgba(58,127,163,.1);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  #closingCanvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  .closing-inner {
+    position: relative;
+    z-index: 2;
+  }
+
+  .cl-jp {
+    font-family: var(--ship);
+    font-size: clamp(3.5rem, 10vw, 8rem);
+    color: var(--white);
+    line-height: 1;
+    margin-bottom: 1.2rem;
+  }
+
+  .cl-sub {
+    font-family: var(--mono);
+    font-size: .62rem;
+    letter-spacing: .4em;
+    color: var(--teal);
+    text-transform: uppercase;
+    margin-bottom: 3.5rem;
+  }
+
+  .cl-langs {
+    display: flex;
+    gap: 3.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .cl-lang {
+    font-family: var(--ship);
+    font-size: .92rem;
+    color: var(--wdim);
+    font-weight: 300;
+    line-height: 1.8;
+  }
+  .cl-lang strong {
+    display: block;
+    font-family: var(--mono);
+    font-size: .5rem;
+    letter-spacing: .25em;
+    color: var(--teal);
+    text-transform: uppercase;
+    margin-bottom: .25rem;
+    font-weight: 400;
+  }
+</style>

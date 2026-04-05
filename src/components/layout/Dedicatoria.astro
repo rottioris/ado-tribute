@@ -1,0 +1,302 @@
+---
+---
+
+<section id="gracias">
+  <div class="inner">
+    <div class="ty-header reveal">
+      <p class="s-label">01 — 感謝</p>
+      <h2 class="s-title">Gracias, Ado</h2>
+      <p class="s-sub">ありがとう、アド &nbsp;·&nbsp; Thank you</p>
+    </div>
+
+    <div class="ty-grid">
+      <div class="ty-text">
+        <p class="reveal">
+          Hay voces que simplemente suenan — y luego hay voces que te
+          <span class="hl">cambian por dentro</span>. La tuya es de las segundas.
+          Desde el primer grito de <span class="hl2">Usseewa</span>, algo diferente entró al mundo.
+        </p>
+
+        <p class="reveal">
+          Tu música no pide permiso. Habla de la rabia de crecer, del peso de las expectativas,
+          de ese deseo de ser tú misma a pesar de todo. Y de
+          <span class="hl2">Vivarium</span> — la primera vez que escribiste con tu propia voz.
+        </p>
+
+        <p class="reveal">
+          No importa que nunca hayamos visto tu cara. Te conocemos en tu voz,
+          en tus palabras, en el armario donde todo comenzó.
+        </p>
+
+        <div class="lyric-block reveal">
+          <p>この薄暗いビバリウムの中で</p>
+          <p>ずっと自分を夢見ていた</p>
+          <p class="lyric-attr">— Vivarium, 2026</p>
+        </div>
+
+        <p class="reveal">
+          Este espacio es nuestro regalo. Un rincón del internet hecho con amor,
+          para que si algún día lo encuentras, sepas exactamente
+          <span class="hl">cuánto significas</span>.
+        </p>
+
+        <p class="reveal closing-line">
+          Gracias por existir, Ado. &nbsp;<span class="hl2">ありがとう。</span>&nbsp; Thank you.
+        </p>
+      </div>
+
+      <!-- Aquarium visual -->
+      <div class="aquarium reveal">
+        <div class="aq-glass"></div>
+        <div class="aq-surface"></div>
+        <div class="aq-corner tl"></div>
+        <div class="aq-corner tr"></div>
+        <div class="aq-corner bl"></div>
+        <div class="aq-corner br"></div>
+        <p class="aq-label">ビバリウム · Vivarium</p>
+        <canvas id="aqCanvas"></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Aquarium canvas — silhouette + floating particles
+  (function () {
+    const cv = document.getElementById('aqCanvas') as HTMLCanvasElement;
+    if (!cv) return;
+    const ctx = cv.getContext('2d')!;
+    let W: number, H: number;
+
+    interface Particle {
+      x: number; y: number; r: number;
+      alpha: number; speed: number;
+      wobble: number; t: number;
+    }
+    let pts: Particle[] = [];
+
+    function resize() {
+      W = cv.width = cv.offsetWidth;
+      H = cv.height = cv.offsetHeight;
+      pts = [];
+      for (let i = 0; i < 22; i++) {
+        pts.push({
+          x: Math.random() * W,
+          y: Math.random() * H,
+          r: 2 + Math.random() * 8,
+          alpha: 0.04 + Math.random() * 0.1,
+          speed: 0.12 + Math.random() * 0.3,
+          wobble: 0.3 + Math.random() * 0.7,
+          t: Math.random() * Math.PI * 2,
+        });
+      }
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+
+      // Background gradient
+      const bg = ctx.createLinearGradient(0, 0, 0, H);
+      bg.addColorStop(0, 'rgba(15,25,45,.8)');
+      bg.addColorStop(1, 'rgba(4,8,18,.95)');
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, W, H);
+
+      // Kanji watermark
+      ctx.save();
+      ctx.font = `bold ${H * 0.45}px 'Shippori Mincho', serif`;
+      ctx.fillStyle = 'rgba(58,127,163,.07)';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('ビ', W / 2, H / 2);
+      ctx.restore();
+
+      // Particles (bubbles)
+      pts.forEach((p, i) => {
+        p.t += 0.012;
+        p.y -= p.speed;
+        p.x += Math.sin(p.t) * p.wobble;
+        if (p.y + p.r < 0) {
+          pts[i] = {
+            x: Math.random() * W,
+            y: H + 10,
+            r: 2 + Math.random() * 8,
+            alpha: 0.04 + Math.random() * 0.1,
+            speed: 0.12 + Math.random() * 0.3,
+            wobble: 0.3 + Math.random() * 0.7,
+            t: Math.random() * Math.PI * 2,
+          };
+          return;
+        }
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(167,216,240,${p.alpha})`;
+        ctx.lineWidth = 0.6;
+        ctx.stroke();
+
+        // Highlight
+        ctx.beginPath();
+        ctx.arc(p.x - p.r * 0.3, p.y - p.r * 0.3, p.r * 0.25, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(220,240,255,${p.alpha * 0.8})`;
+        ctx.fill();
+      });
+
+      // Closet silhouette (simple rectangle to represent the armario)
+      const cx = W / 2;
+      const cw = W * 0.18;
+      const ch = H * 0.52;
+      const cy = H - ch - H * 0.04;
+
+      ctx.save();
+      ctx.fillStyle = 'rgba(10,18,35,0.85)';
+      ctx.fillRect(cx - cw / 2, cy, cw, ch);
+
+      // Door line
+      ctx.strokeStyle = 'rgba(58,127,163,0.2)';
+      ctx.lineWidth = 0.5;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(cx, cy + ch);
+      ctx.stroke();
+
+      // Glow from within closet
+      const grd = ctx.createRadialGradient(cx, cy + ch * 0.4, 2, cx, cy + ch * 0.4, cw * 1.5);
+      grd.addColorStop(0, 'rgba(58,127,163,0.18)');
+      grd.addColorStop(1, 'rgba(58,127,163,0)');
+      ctx.fillStyle = grd;
+      ctx.fillRect(cx - cw * 2, cy - ch * 0.1, cw * 4, ch * 1.2);
+      ctx.restore();
+
+      // Floor plants hint
+      const grad2 = ctx.createLinearGradient(0, H - 30, 0, H);
+      grad2.addColorStop(0, 'transparent');
+      grad2.addColorStop(1, 'rgba(30,50,70,0.6)');
+      ctx.fillStyle = grad2;
+      ctx.fillRect(0, H - 30, W, 30);
+
+      requestAnimationFrame(draw);
+    }
+
+    resize();
+    window.addEventListener('resize', resize);
+    draw();
+  })();
+</script>
+
+<style>
+  #gracias {
+    background: linear-gradient(to bottom, var(--void), var(--abyss));
+  }
+
+  .ty-header { margin-bottom: 3.5rem; }
+
+  .ty-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: center;
+  }
+
+  .ty-text {
+    display: flex;
+    flex-direction: column;
+    gap: 1.3rem;
+  }
+
+  .ty-text p {
+    font-size: .97rem;
+    line-height: 2.1;
+    color: var(--wdim);
+    font-weight: 300;
+  }
+
+  .hl  { color: var(--white); font-weight: 400; }
+  .hl2 { color: var(--teal2); }
+
+  .lyric-block {
+    border-left: 2px solid var(--teal);
+    padding: 1.3rem 1.8rem;
+    background: rgba(58,127,163,.05);
+    margin: .5rem 0;
+  }
+  .lyric-block p {
+    font-family: var(--ship);
+    font-size: 1.1rem;
+    line-height: 2;
+    color: var(--white);
+    margin: 0;
+  }
+  .lyric-attr {
+    font-family: var(--mono) !important;
+    font-size: .57rem !important;
+    color: var(--wdim) !important;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    margin-top: .6rem !important;
+  }
+
+  .closing-line {
+    color: var(--white) !important;
+    font-weight: 400 !important;
+  }
+
+  /* Aquarium */
+  .aquarium {
+    position: relative;
+    width: 100%;
+    height: 380px;
+    border: 1px solid rgba(58,127,163,.25);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .aquarium canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .aq-glass {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 30%, rgba(58,127,163,.08), transparent);
+    z-index: 1;
+    pointer-events: none;
+  }
+  .aq-surface {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(to right, transparent, rgba(167,216,240,.4), transparent);
+    animation: surface 4s ease-in-out infinite;
+    z-index: 2;
+  }
+  @keyframes surface {
+    0%, 100% { opacity: .4; }
+    50%       { opacity: .9; }
+  }
+
+  .aq-label {
+    position: absolute;
+    top: 1rem; left: 1rem;
+    font-family: var(--mono);
+    font-size: .55rem;
+    color: rgba(167,216,240,.3);
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    z-index: 3;
+  }
+
+  .aq-corner {
+    position: absolute;
+    width: 12px; height: 12px;
+    border-color: rgba(58,127,163,.4);
+    z-index: 3;
+  }
+  .aq-corner.tl { top: 8px;    left: 8px;    border-top: 1px solid; border-left: 1px solid; }
+  .aq-corner.tr { top: 8px;    right: 8px;   border-top: 1px solid; border-right: 1px solid; }
+  .aq-corner.bl { bottom: 8px; left: 8px;    border-bottom: 1px solid; border-left: 1px solid; }
+  .aq-corner.br { bottom: 8px; right: 8px;   border-bottom: 1px solid; border-right: 1px solid; }
+</style>

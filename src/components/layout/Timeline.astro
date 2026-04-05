@@ -1,0 +1,187 @@
+---
+const events = [
+  {
+    year: '2017',
+    jp: 'はじまり',
+    title: 'El comienzo',
+    desc: 'Ado sube sus primeras canciones a NicoNico Douga siendo adolescente. Desde un cuarto, con una voz que nadie había escuchado antes.',
+    badge: 'NicoNico Douga',
+  },
+  {
+    year: '2020',
+    jp: 'うっせぇわ',
+    title: 'Usseewa — うっせぇわ',
+    desc: 'Una canción que explotó en Japón y más allá. La rabia de una generación encapsulada en tres minutos. Más de 200 millones de reproducciones.',
+    badge: 'Viral · 2020',
+  },
+  {
+    year: '2021',
+    jp: 'デビュー',
+    title: 'Debut oficial',
+    desc: 'Lanza su primer álbum. Se confirma como una de las artistas más importantes de Japón sin haber mostrado su rostro jamás.',
+    badge: 'Kyougen',
+  },
+  {
+    year: '2022',
+    jp: '新時代',
+    title: 'New Genesis — 新時代',
+    desc: 'Tema principal de One Piece Film: Red. Llevó su voz a millones de fans del anime alrededor del mundo.',
+    badge: 'One Piece Film: Red',
+  },
+  {
+    year: '2023',
+    jp: 'ワールドツアー',
+    title: 'World Tour',
+    desc: 'Primera gira mundial. México, Brasil, Los Ángeles, Europa. Estadios llenos de personas que la conocen solo por su voz.',
+    badge: 'World Tour · 2023',
+  },
+  {
+    year: '2024',
+    jp: 'ビバリウム',
+    title: 'Vivarium — ビバリウム',
+    desc: 'Su primera canción escrita completamente por ella. Un acto de valentía. El MV muestra, por primera vez, un destello de su silueta en el armario donde todo comenzó.',
+    badge: 'Autoría propia',
+  },
+];
+---
+
+<section id="timeline">
+  <div class="inner">
+    <p class="s-label reveal">02 — その軌跡</p>
+    <h2 class="s-title reveal">Su camino</h2>
+    <p class="s-sub reveal">その軌跡 &nbsp;·&nbsp; The journey so far</p>
+
+    <div class="tl-wrap">
+      <div class="tl-spine"></div>
+
+      {events.map((e, i) => (
+        <div class={`tl-item reveal ${i % 2 === 0 ? 'left' : 'right'}`}>
+          <!-- Content block -->
+          <div class="tl-body">
+            <p class="tl-jp">{e.jp}</p>
+            <h3 class="tl-title">{e.title}</h3>
+            <p class="tl-desc">{e.desc}</p>
+            <span class="tl-badge">{e.badge}</span>
+          </div>
+
+          <!-- Center node -->
+          <div class="tl-node">
+            <div class="tl-dot"></div>
+            <span class="tl-year">{e.year}</span>
+          </div>
+
+          <!-- Empty opposite side -->
+          <div class="tl-empty"></div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  #timeline {
+    background: var(--abyss);
+  }
+
+  .tl-wrap {
+    position: relative;
+    margin-top: 3.5rem;
+  }
+
+  .tl-spine {
+    position: absolute;
+    left: 50%;
+    top: 0; bottom: 0;
+    width: 1px;
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      var(--teal) 10%,
+      var(--teal) 90%,
+      transparent
+    );
+    transform: translateX(-50%);
+    opacity: .22;
+  }
+
+  .tl-item {
+    display: grid;
+    grid-template-columns: 1fr 52px 1fr;
+    align-items: start;
+    margin-bottom: 3.5rem;
+  }
+
+  /* Left events: body on col 1, node on col 2, empty on col 3 */
+  .tl-item.left .tl-body  { grid-column: 1; text-align: right; padding: 0 2rem 0 0; }
+  .tl-item.left .tl-node  { grid-column: 2; }
+  .tl-item.left .tl-empty { grid-column: 3; }
+
+  /* Right events: empty on col 1, node on col 2, body on col 3 */
+  .tl-item.right .tl-empty { grid-column: 1; }
+  .tl-item.right .tl-node  { grid-column: 2; }
+  .tl-item.right .tl-body  { grid-column: 3; padding: 0 0 0 2rem; }
+
+  .tl-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding-top: 4px;
+  }
+
+  .tl-dot {
+    width: 10px; height: 10px;
+    background: var(--teal);
+    border-radius: 50%;
+    border: 2px solid var(--void);
+    outline: 1px solid var(--teal);
+    flex-shrink: 0;
+  }
+
+  .tl-year {
+    font-family: var(--mono);
+    font-size: .55rem;
+    color: var(--teal);
+    letter-spacing: .08em;
+    writing-mode: vertical-lr;
+    transform: rotate(180deg);
+    white-space: nowrap;
+  }
+
+  .tl-jp {
+    font-family: var(--ship);
+    font-size: .82rem;
+    color: var(--teal);
+    margin-bottom: .3rem;
+    font-weight: 300;
+  }
+
+  .tl-title {
+    font-family: var(--ship);
+    font-size: 1.1rem;
+    color: var(--white);
+    margin-bottom: .45rem;
+    font-weight: 700;
+  }
+
+  .tl-desc {
+    font-size: .82rem;
+    line-height: 1.75;
+    color: var(--wdim);
+  }
+
+  .tl-badge {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: .55rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--teal);
+    border: 1px solid rgba(58,127,163,.32);
+    padding: 2px 8px;
+    border-radius: 2px;
+    margin-top: .7rem;
+  }
+
+  .tl-empty { /* placeholder */ }
+</style>

@@ -1,0 +1,286 @@
+---
+---
+
+<section id="hero">
+
+  <!-- ── Video background ── -->
+  <div class="hero-video-wrap">
+    <video
+      id="heroBg"
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="none"
+      aria-hidden="true"
+    >
+      <source src="/video/Ado_Vivarium.webm" type="video/webm" />
+    </video>
+    <div class="hero-overlay"></div>
+  </div>
+
+  <!-- ── Caustic water effect ── -->
+  <div class="caustic" aria-hidden="true"></div>
+
+  <!-- ── Content ── -->
+  <div class="hero-content">
+    <p class="hero-top">Fan Tribute · ファントリビュート · 2026</p>
+
+    <h1 class="hero-title">
+      <span class="a-wrap">
+        <span class="a">A</span>
+        <img
+          src="/images/ado-rose.png"
+          alt=""
+          class="hero-logo"
+          aria-hidden="true"
+          draggable="false"
+        />
+      </span><span class="do">do</span>
+    </h1>
+
+    <p class="hero-lyric">
+      この薄暗いビバリウムの中で &nbsp;·&nbsp; En este oscuro vivarium
+    </p>
+
+    <div class="hero-langs">
+      <div class="hl-item">
+        <span>Español</span>
+        Para ti, con amor
+      </div>
+      <div class="hl-item">
+        <span>English</span>
+        For you, with love
+      </div>
+      <div class="hl-item">
+        <span>日本語</span>
+        あなたへ、愛を込めて
+      </div>
+    </div>
+  </div>
+
+  <div class="scroll-hint" aria-hidden="true">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+
+</section>
+
+<script>
+  const vid = document.getElementById('heroBg') as HTMLVideoElement;
+  if (vid) {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      vid.pause();
+      vid.removeAttribute('autoplay');
+    } else {
+      const obs = new IntersectionObserver(
+        ([e]) => { e.isIntersecting ? vid.play().catch(() => {}) : vid.pause(); },
+        { threshold: 0.1 }
+      );
+      obs.observe(vid);
+    }
+  }
+</script>
+
+<style>
+  /* ── Hero shell ── */
+  #hero {
+    position: relative;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    overflow: hidden;
+    background: var(--void);
+  }
+
+  /* ── Video sin bandas negras ──
+     Video cuadrado/vertical → min-width + min-height + translate
+     cubre el viewport sin deformar ni mostrar bandas */
+  .hero-video-wrap {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+  }
+  #heroBg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    transform: translate(-50%, -50%) translateZ(0);
+    will-change: transform;
+  }
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(4,5,10,.72) 0%,
+      rgba(4,5,10,.35) 35%,
+      rgba(4,5,10,.40) 65%,
+      rgba(4,5,10,.78) 100%
+    );
+  }
+
+  /* ── Caustic ── */
+  .caustic {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background:
+      repeating-linear-gradient(45deg,  transparent, transparent 40px, rgba(58,127,163,.012) 40px, rgba(58,127,163,.012) 41px),
+      repeating-linear-gradient(-45deg, transparent, transparent 60px, rgba(167,216,240,.008) 60px, rgba(167,216,240,.008) 61px);
+    animation: causticMove 8s ease-in-out infinite alternate;
+  }
+  @keyframes causticMove {
+    from { background-position: 0 0, 0 0; }
+    to   { background-position: 40px 40px, 60px 60px; }
+  }
+
+  /* ── Content ── */
+  .hero-content {
+    position: relative;
+    z-index: 5;
+  }
+
+  .hero-top {
+    font-family: var(--mono);
+    font-size: .62rem;
+    letter-spacing: .5em;
+    color: var(--teal);
+    text-transform: uppercase;
+    margin-bottom: 1.6rem;
+    opacity: 0;
+    animation: fadeUp 1.2s ease forwards .4s;
+  }
+
+  /* A y do pegados — el whitespace en el HTML está eliminado
+     con el comentario de cierre de tag en la misma línea */
+  .hero-title {
+    font-family: var(--ship);
+    font-size: clamp(5rem, 18vw, 12rem);
+    font-weight: 700;
+    line-height: .88;
+    opacity: 0;
+    animation: fadeUp 1.2s ease forwards .75s;
+    overflow: visible;
+    /* Elimina cualquier gap residual entre spans */
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0;
+  }
+
+  .a-wrap {
+    position: relative;
+    display: inline-block;
+  }
+
+  .a  { color: var(--teal); }
+  .do { color: rgba(167,216,240,.9); }
+
+  /* ── Logo sobre la "A" ──
+     Ajustar solo estas 3 variables */
+  .hero-logo {
+    --logo-top:  25%;
+    --logo-left: 1%;
+    --logo-size: 55%;
+
+    position: absolute;
+    top:  var(--logo-top);
+    left: var(--logo-left);
+    width: var(--logo-size);
+    height: auto;
+    pointer-events: none;
+    user-select: none;
+    filter: drop-shadow(0 0 12px rgba(58,127,163,.55));
+    opacity: 0;
+    animation: fadeUp 1.2s ease forwards .75s;
+  }
+
+  .hero-lyric {
+    font-family: var(--ship);
+    font-size: clamp(.75rem, 1.8vw, .95rem);
+    color: var(--wdim);
+    letter-spacing: .18em;
+    margin-top: 1.8rem;
+    font-weight: 300;
+    font-style: italic;
+    opacity: 0;
+    animation: fadeUp 1.2s ease forwards 1.1s;
+  }
+
+  .hero-langs {
+    display: flex;
+    gap: 2.5rem;
+    justify-content: center;
+    margin-top: 2.5rem;
+    opacity: 0;
+    animation: fadeUp 1.2s ease forwards 1.4s;
+  }
+  .hl-item {
+    font-family: var(--ship);
+    font-size: .88rem;
+    color: var(--wdim);
+  }
+  .hl-item span {
+    display: block;
+    font-family: var(--mono);
+    font-size: .52rem;
+    color: rgba(167,216,240,.28);
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    margin-bottom: .25rem;
+  }
+
+  /* ── Scroll hint ── */
+  .scroll-hint {
+    position: absolute;
+    bottom: 2.2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .5rem;
+    opacity: 0;
+    animation: fadeUp 1s ease forwards 2.2s;
+    z-index: 5;
+  }
+  .scroll-hint span {
+    font-family: var(--mono);
+    font-size: .52rem;
+    letter-spacing: .3em;
+    color: rgba(167,216,240,.25);
+    text-transform: uppercase;
+  }
+  .scroll-line {
+    width: 1px;
+    height: 50px;
+    background: linear-gradient(to bottom, var(--teal), transparent);
+    animation: scrollAnim 2.3s ease-in-out infinite;
+  }
+  @keyframes scrollAnim {
+    0%   { transform: scaleY(0); transform-origin: top; }
+    50%  { transform: scaleY(1); transform-origin: top; }
+    51%  { transform: scaleY(1); transform-origin: bottom; }
+    100% { transform: scaleY(0); transform-origin: bottom; }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .caustic     { animation: none; }
+    .scroll-line { animation: none; }
+  }
+</style>

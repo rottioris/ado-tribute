@@ -1,0 +1,78 @@
+---
+export interface Props {
+  active?: 'home' | 'fanarts' | 'messages' | 'profile';
+}
+const { active = 'home' } = Astro.props;
+
+const links = [
+  { href: '/fanarts',  label: 'Fan Art',  key: 'fanarts'  },
+  { href: '/messages', label: 'Mensajes', key: 'messages' },
+  { href: '/profile',  label: 'Perfil',   key: 'profile'  },
+];
+---
+
+<nav id="nav">
+  <a href="/" class="nav-logo">ビバリウム</a>
+  <ul class="nav-links">
+    {links.map(l => (
+      <li>
+        <a href={l.href} class:list={[{ active: active === l.key }]}>
+          {l.label}
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>
+
+<script>
+  // Scroll opacity
+  const nav = document.getElementById('nav')!;
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+  });
+</script>
+
+<style>
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 300;
+    padding: 1.2rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(to bottom, rgba(4,5,10,.95), transparent);
+    backdrop-filter: blur(8px);
+    transition: background .3s;
+  }
+  nav.scrolled {
+    background: rgba(4,5,10,.92);
+  }
+
+  .nav-logo {
+    font-family: var(--ship);
+    font-size: 1.3rem;
+    color: var(--teal);
+    letter-spacing: .3em;
+    text-decoration: none;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: var(--wdim);
+    font-family: var(--mono);
+    font-size: .6rem;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    transition: color .3s;
+  }
+  .nav-links a:hover,
+  .nav-links a.active {
+    color: var(--teal2);
+  }
+</style>
