@@ -1,0 +1,148 @@
+---
+---
+
+<section id="fanart-preview">
+  <div class="inner">
+    <p class="s-label reveal">03 — ファンアート</p>
+    <h2 class="s-title reveal">Fan Art</h2>
+    <p class="s-sub reveal">Arte de los fans · ファンアート</p>
+
+    <p class="fa-intro reveal">
+      Ilustraciones, pinturas y creaciones de fans de todo el mundo dedicadas a Ado.
+      Cada obra es un pedazo de alma.
+    </p>
+
+    <div class="fa-grid" id="faGrid">
+      <!-- Placeholder cards — se reemplazarán con imágenes reales de Supabase -->
+      {Array.from({ length: 3 }).map((_, i) => (
+        <div class="fa-card reveal">
+          <canvas class="fa-canvas" data-index={i}></canvas>
+          <div class="fa-ov">
+            <p class="fa-t">Fan Art</p>
+            <p class="fa-b">Loading...</p>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <a href="/fanarts" class="btn-outline reveal">
+      Ver galería completa →
+    </a>
+  </div>
+</section>
+
+<script>
+  // Placeholder canvas art — colores del tema hasta tener imágenes reales
+  const canvases = document.querySelectorAll<HTMLCanvasElement>('.fa-canvas');
+  const palettes = [
+    ['#0f1520', '#3A7FA3', '#A7D8F0'],
+    ['#080c14', '#4F5D8C', '#F59BB0'],
+    ['#04050a', '#3B3F63', '#A7D8F0'],
+  ];
+
+  canvases.forEach((cv, idx) => {
+    const ctx = cv.getContext('2d')!;
+    const p = palettes[idx % palettes.length];
+
+    function draw() {
+      const W = cv.width = cv.offsetWidth;
+      const H = cv.height = cv.offsetHeight;
+
+      const grd = ctx.createLinearGradient(0, 0, W, H);
+      grd.addColorStop(0, p[0]);
+      grd.addColorStop(1, p[1]);
+      ctx.fillStyle = grd;
+      ctx.fillRect(0, 0, W, H);
+
+      // Subtle circles
+      for (let i = 0; i < 6; i++) {
+        ctx.beginPath();
+        ctx.arc(
+          W * (.2 + Math.random() * .6),
+          H * (.2 + Math.random() * .6),
+          20 + Math.random() * 60,
+          0, Math.PI * 2
+        );
+        ctx.fillStyle = p[2] + '10';
+        ctx.fill();
+      }
+
+      // Kanji placeholder
+      ctx.font = `bold ${H * .35}px 'Shippori Mincho', serif`;
+      ctx.fillStyle = p[2] + '08';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('ア', W / 2, H / 2);
+    }
+
+    draw();
+    window.addEventListener('resize', draw);
+  });
+</script>
+
+<style>
+  #fanart-preview {
+    background: linear-gradient(to bottom, var(--abyss), var(--deep));
+  }
+
+  .fa-intro {
+    font-size: .9rem;
+    line-height: 1.9;
+    color: var(--wdim);
+    max-width: 560px;
+    margin-bottom: 2.5rem;
+  }
+
+  .fa-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.2rem;
+    margin-bottom: 2rem;
+  }
+
+  .fa-card {
+    position: relative;
+    aspect-ratio: 3/4;
+    background: var(--navy);
+    border: 1px solid rgba(255,255,255,.05);
+    border-radius: 3px;
+    overflow: hidden;
+    transition: transform .4s, border-color .3s;
+  }
+  .fa-card:hover {
+    transform: scale(1.025);
+    border-color: rgba(58,127,163,.4);
+  }
+
+  .fa-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .fa-ov {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(4,5,10,.9) 0%, transparent 50%);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 1rem;
+    opacity: 0;
+    transition: opacity .3s;
+  }
+  .fa-card:hover .fa-ov { opacity: 1; }
+
+  .fa-t {
+    font-family: var(--ship);
+    font-size: .85rem;
+    color: var(--white);
+    margin-bottom: .15rem;
+  }
+  .fa-b {
+    font-family: var(--mono);
+    font-size: .55rem;
+    color: var(--teal);
+    letter-spacing: .1em;
+  }
+</style>

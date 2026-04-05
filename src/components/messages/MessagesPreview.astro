@@ -1,0 +1,135 @@
+---
+// Sample messages — se reemplazarán con datos reales de Supabase
+const sampleMessages = [
+  {
+    name: 'Camila F.',
+    country: 'Argentina',
+    flag: '🇦🇷',
+    song: 'Kura Kura',
+    text: 'Tu música llegó en un momento muy difícil de mi vida y me ayudó a encontrar fuerzas que no sabía que tenía.',
+  },
+  {
+    name: 'Santiago B.',
+    country: 'México',
+    flag: '🇲🇽',
+    song: 'Vivarium',
+    text: 'Te vi en el concierto en México y lloré de principio a fin. Tu voz comunica lo que ningún idioma puede.',
+  },
+  {
+    name: 'Daniela P.',
+    country: 'Colombia',
+    flag: '🇨🇴',
+    song: 'Vivarium',
+    text: 'Cuando vi el MV de Vivarium, entendí todo. Ese lugar pequeño donde todo empezó y ahora llena estadios.',
+  },
+];
+---
+
+<section id="messages-preview">
+  <div class="inner">
+    <p class="s-label reveal">04 — メッセージ</p>
+    <h2 class="s-title reveal">Mensajes</h2>
+    <p class="s-sub reveal">Palabras de fans · ファンからのメッセージ</p>
+
+    <div class="msgs-grid">
+      {sampleMessages.map((m, i) => (
+        <div class="mc reveal" style={`animation-delay: ${i * 120}ms`}>
+          <p class="mc-txt">{m.text}</p>
+          <div class="mc-foot">
+            <div>
+              <p class="mc-name">{m.name}</p>
+              <p class="mc-country">{m.country}</p>
+            </div>
+            <div style="text-align:right">
+              <p class="mc-flag">{m.flag}</p>
+              {m.song && <p class="mc-song">{m.song}</p>}
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <a href="/messages" class="btn-outline reveal">
+      Ver todos los mensajes →
+    </a>
+  </div>
+</section>
+
+<style>
+  #messages-preview {
+    background: var(--deep);
+  }
+
+  .msgs-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.2rem;
+    margin-bottom: 2rem;
+  }
+
+  .mc {
+    background: rgba(255,255,255,.02);
+    border: 1px solid rgba(255,255,255,.06);
+    border-radius: 4px;
+    padding: 1.3rem;
+    position: relative;
+    transition: border-color .3s, transform .3s;
+  }
+  .mc::before {
+    content: '"';
+    font-family: var(--ship);
+    font-size: 3.5rem;
+    color: rgba(58,127,163,.07);
+    position: absolute;
+    top: -.3rem;
+    left: .9rem;
+    line-height: 1;
+  }
+  .mc:hover {
+    border-color: rgba(58,127,163,.3);
+    transform: translateY(-2px);
+  }
+
+  .mc-txt {
+    font-size: .84rem;
+    line-height: 1.85;
+    color: var(--wdim);
+    margin-bottom: 1rem;
+    position: relative;
+    z-index: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .mc-foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  .mc-name {
+    font-family: var(--ship);
+    font-size: .82rem;
+    color: var(--white);
+  }
+  .mc-country {
+    font-family: var(--mono);
+    font-size: .55rem;
+    color: var(--teal);
+    letter-spacing: .1em;
+    margin-top: .1rem;
+  }
+  .mc-flag { font-size: 1.05rem; }
+  .mc-song {
+    font-family: var(--mono);
+    font-size: .5rem;
+    color: rgba(167,216,240,.45);
+    letter-spacing: .1em;
+    border: 1px solid rgba(58,127,163,.18);
+    padding: 2px 5px;
+    border-radius: 2px;
+    margin-top: .3rem;
+  }
+</style>
