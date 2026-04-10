@@ -3,41 +3,53 @@
 
 <section id="fanart-preview">
   <div class="inner">
-    <p class="s-label reveal">03 — ファンアート</p>
-    <h2 class="s-title reveal">Fan Art</h2>
-    <p class="s-sub reveal">Arte de los fans · ファンアート</p>
 
-    <p class="fa-intro reveal">
-      Ilustraciones, pinturas y creaciones de fans de todo el mundo dedicadas a Ado.
-      Cada obra es un pedazo de alma.
-    </p>
+    <div class="fa-header">
+      <div>
+        <p class="s-label reveal">01 — ファンアート</p>
+        <h2 class="s-title reveal">Fan Art</h2>
+        <p class="s-sub reveal">Arte de fans de todo el mundo · ファンアート</p>
+      </div>
+      <a href="/fanarts" class="cta-upload reveal">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+        Subir mi fan art
+      </a>
+    </div>
 
+    <!-- Grid 2 filas × 3 cols = 6 cards -->
     <div class="fa-grid" id="faGrid">
-      <!-- Placeholder cards — se reemplazarán con imágenes reales de Supabase -->
-      {Array.from({ length: 3 }).map((_, i) => (
-        <div class="fa-card reveal">
+      {Array.from({ length: 6 }).map((_, i) => (
+        <div class="fa-card reveal" style={`animation-delay:${i*80}ms`}>
           <canvas class="fa-canvas" data-index={i}></canvas>
           <div class="fa-ov">
             <p class="fa-t">Fan Art</p>
-            <p class="fa-b">Loading...</p>
+            <p class="fa-b">@fan · próximamente</p>
           </div>
         </div>
       ))}
     </div>
 
-    <a href="/fanarts" class="btn-outline reveal">
-      Ver galería completa →
-    </a>
+    <div class="fa-footer reveal">
+      <a href="/fanarts" class="btn-outline">Ver galería completa →</a>
+      <span class="fa-count">
+        <span class="fa-num" id="faCount">—</span> obras subidas
+      </span>
+    </div>
+
   </div>
 </section>
 
 <script>
-  // Placeholder canvas art — colores del tema hasta tener imágenes reales
   const canvases = document.querySelectorAll<HTMLCanvasElement>('.fa-canvas');
   const palettes = [
-    ['#0f1520', '#3A7FA3', '#A7D8F0'],
-    ['#080c14', '#4F5D8C', '#F59BB0'],
-    ['#04050a', '#3B3F63', '#A7D8F0'],
+    ['#0a1220','#2a5070','#A7D8F0'],
+    ['#080c14','#3B3F63','#F59BB0'],
+    ['#04050a','#1a3050','#A7D8F0'],
+    ['#0f1828','#4F5D8C','#e8c4d0'],
+    ['#060d18','#253550','#7dbcd8'],
+    ['#090e1a','#2F3A5A','#F59BB0'],
   ];
 
   canvases.forEach((cv, idx) => {
@@ -47,32 +59,26 @@
     function draw() {
       const W = cv.width = cv.offsetWidth;
       const H = cv.height = cv.offsetHeight;
+      const g = ctx.createLinearGradient(0, 0, W, H);
+      g.addColorStop(0, p[0]); g.addColorStop(1, p[1]);
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
 
-      const grd = ctx.createLinearGradient(0, 0, W, H);
-      grd.addColorStop(0, p[0]);
-      grd.addColorStop(1, p[1]);
-      ctx.fillStyle = grd;
-      ctx.fillRect(0, 0, W, H);
-
-      // Subtle circles
-      for (let i = 0; i < 6; i++) {
-        ctx.beginPath();
-        ctx.arc(
-          W * (.2 + Math.random() * .6),
-          H * (.2 + Math.random() * .6),
-          20 + Math.random() * 60,
-          0, Math.PI * 2
+      // Círculos difusos
+      for (let i = 0; i < 5; i++) {
+        const rg = ctx.createRadialGradient(
+          W*(.15+Math.random()*.7), H*(.1+Math.random()*.8), 0,
+          W*(.15+Math.random()*.7), H*(.1+Math.random()*.8), W*.4
         );
-        ctx.fillStyle = p[2] + '10';
-        ctx.fill();
+        rg.addColorStop(0, p[2]+'18'); rg.addColorStop(1, 'transparent');
+        ctx.fillStyle = rg; ctx.fillRect(0, 0, W, H);
       }
 
-      // Kanji placeholder
-      ctx.font = `bold ${H * .35}px 'Shippori Mincho', serif`;
-      ctx.fillStyle = p[2] + '08';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText('ア', W / 2, H / 2);
+      // Kanji decorativo
+      const kanjis = ['ア','愛','声','夢','歌','花'];
+      ctx.font = `bold ${H*.42}px 'Shippori Mincho',serif`;
+      ctx.fillStyle = p[2]+'0a';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(kanjis[idx % kanjis.length], W/2, H/2);
     }
 
     draw();
@@ -82,21 +88,47 @@
 
 <style>
   #fanart-preview {
-    background: linear-gradient(to bottom, var(--abyss), var(--deep));
+    background: var(--void);
+    padding: var(--section-pad) 0;
   }
 
-  .fa-intro {
-    font-size: .9rem;
-    line-height: 1.9;
-    color: var(--wdim);
-    max-width: 560px;
+  /* Header con label+título a la izquierda y CTA a la derecha */
+  .fa-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
     margin-bottom: 2.5rem;
+    flex-wrap: wrap;
+    gap: 1.5rem;
   }
 
+  .cta-upload {
+    display: inline-flex;
+    align-items: center;
+    gap: .55rem;
+    font-family: var(--mono);
+    font-size: .62rem;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    padding: .85rem 1.8rem;
+    background: var(--teal);
+    color: var(--void);
+    font-weight: 700;
+    border-radius: 2px;
+    transition: background .3s, transform .25s;
+    white-space: nowrap;
+    cursor: none;
+  }
+  .cta-upload:hover {
+    background: var(--teal2);
+    transform: translateY(-2px);
+  }
+
+  /* Grid: 3 cols desktop, 2 tablet, 1 mobile */
   .fa-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 1.2rem;
+    gap: 1rem;
     margin-bottom: 2rem;
   }
 
@@ -107,42 +139,56 @@
     border: 1px solid rgba(255,255,255,.05);
     border-radius: 3px;
     overflow: hidden;
-    transition: transform .4s, border-color .3s;
+    transition: transform .4s, border-color .3s, box-shadow .4s;
   }
   .fa-card:hover {
-    transform: scale(1.025);
-    border-color: rgba(58,127,163,.4);
+    transform: translateY(-4px) scale(1.01);
+    border-color: rgba(58,127,163,.45);
+    box-shadow: 0 12px 40px rgba(0,0,0,.5);
   }
 
-  .fa-canvas {
-    width: 100%;
-    height: 100%;
-    display: block;
-  }
+  .fa-canvas { width: 100%; height: 100%; display: block; }
 
   .fa-ov {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to top, rgba(4,5,10,.9) 0%, transparent 50%);
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    padding: 1rem;
-    opacity: 0;
-    transition: opacity .3s;
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(4,5,10,.92) 0%, transparent 55%);
+    display: flex; flex-direction: column;
+    justify-content: flex-end; padding: 1rem;
+    opacity: 0; transition: opacity .3s;
   }
   .fa-card:hover .fa-ov { opacity: 1; }
 
-  .fa-t {
-    font-family: var(--ship);
-    font-size: .85rem;
-    color: var(--white);
-    margin-bottom: .15rem;
+  .fa-t { font-family: var(--ship); font-size: .85rem; color: var(--white); margin-bottom: .15rem; }
+  .fa-b { font-family: var(--mono); font-size: .55rem; color: var(--teal); letter-spacing: .1em; }
+
+  /* Footer: link galería + contador */
+  .fa-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
   }
-  .fa-b {
+
+  .fa-count {
     font-family: var(--mono);
-    font-size: .55rem;
-    color: var(--teal);
-    letter-spacing: .1em;
+    font-size: .58rem;
+    color: var(--wdim);
+    letter-spacing: .15em;
+  }
+  .fa-num {
+    color: var(--teal2);
+    font-size: .75rem;
+    font-weight: 700;
+    margin-right: .3rem;
+  }
+
+  @media (max-width: 768px) {
+    .fa-grid { grid-template-columns: repeat(2, 1fr); }
+    .fa-header { flex-direction: column; align-items: flex-start; }
+    .cta-upload { width: 100%; justify-content: center; }
+  }
+  @media (max-width: 480px) {
+    .fa-grid { grid-template-columns: 1fr; }
   }
 </style>

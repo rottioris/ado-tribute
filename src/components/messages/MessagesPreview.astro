@@ -1,100 +1,133 @@
 ---
-// Sample messages — se reemplazarán con datos reales de Supabase
 const sampleMessages = [
-  {
-    name: 'Camila F.',
-    country: 'Argentina',
-    flag: '🇦🇷',
-    song: 'Kura Kura',
-    text: 'Tu música llegó en un momento muy difícil de mi vida y me ayudó a encontrar fuerzas que no sabía que tenía.',
-  },
-  {
-    name: 'Santiago B.',
-    country: 'México',
-    flag: '🇲🇽',
-    song: 'Vivarium',
-    text: 'Te vi en el concierto en México y lloré de principio a fin. Tu voz comunica lo que ningún idioma puede.',
-  },
-  {
-    name: 'Daniela P.',
-    country: 'Colombia',
-    flag: '🇨🇴',
-    song: 'Vivarium',
-    text: 'Cuando vi el MV de Vivarium, entendí todo. Ese lugar pequeño donde todo empezó y ahora llena estadios.',
-  },
+  { name:'Camila F.', country:'Argentina', flag:'🇦🇷', song:'Kura Kura',
+    text:'Tu música llegó en un momento muy difícil de mi vida y me ayudó a encontrar fuerzas que no sabía que tenía.' },
+  { name:'Santiago B.', country:'México', flag:'🇲🇽', song:'Vivarium',
+    text:'Te vi en el concierto en México y lloré de principio a fin. Tu voz comunica lo que ningún idioma puede.' },
+  { name:'Daniela P.', country:'Colombia', flag:'🇨🇴', song:'Vivarium',
+    text:'Cuando vi el MV de Vivarium, entendí todo. Ese lugar pequeño donde todo empezó y ahora llena estadios.' },
+  { name:'Yuki T.', country:'Japan', flag:'🇯🇵', song:'Tot Musica',
+    text:'アドちゃん、あなたの声は本当に唯一無二。これからもずっと応援しています。' },
 ];
 ---
 
 <section id="messages-preview">
   <div class="inner">
-    <p class="s-label reveal">04 — メッセージ</p>
-    <h2 class="s-title reveal">Mensajes</h2>
-    <p class="s-sub reveal">Palabras de fans · ファンからのメッセージ</p>
+
+    <div class="ms-header">
+      <div>
+        <p class="s-label reveal">02 — メッセージ</p>
+        <h2 class="s-title reveal">Mensajes para Ado</h2>
+        <p class="s-sub reveal">Palabras de fans · ファンからのメッセージ</p>
+      </div>
+      <a href="/messages" class="cta-msg reveal">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+        Dejar mi mensaje
+      </a>
+    </div>
 
     <div class="msgs-grid">
       {sampleMessages.map((m, i) => (
-        <div class="mc reveal" style={`animation-delay: ${i * 120}ms`}>
+        <div class="mc reveal" style={`animation-delay:${i*100}ms`}>
           <p class="mc-txt">{m.text}</p>
           <div class="mc-foot">
             <div>
               <p class="mc-name">{m.name}</p>
-              <p class="mc-country">{m.country}</p>
+              <p class="mc-country">{m.flag} {m.country}</p>
             </div>
-            <div style="text-align:right">
-              <p class="mc-flag">{m.flag}</p>
-              {m.song && <p class="mc-song">{m.song}</p>}
-            </div>
+            {m.song && <p class="mc-song">{m.song}</p>}
           </div>
         </div>
       ))}
     </div>
 
-    <a href="/messages" class="btn-outline reveal">
-      Ver todos los mensajes →
-    </a>
+    <div class="ms-footer reveal">
+      <a href="/messages" class="btn-outline">Ver todos los mensajes →</a>
+      <span class="ms-count">
+        <span class="ms-num" id="msCount">—</span> mensajes enviados
+      </span>
+    </div>
+
   </div>
 </section>
 
 <style>
   #messages-preview {
-    background: var(--deep);
+    background: var(--void);
+    padding: var(--section-pad) 0;
   }
 
+  .ms-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 2.5rem;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+
+  .cta-msg {
+    display: inline-flex;
+    align-items: center;
+    gap: .55rem;
+    font-family: var(--mono);
+    font-size: .62rem;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    padding: .85rem 1.8rem;
+    border: 1px solid rgba(58,127,163,.5);
+    color: var(--teal2);
+    background: rgba(58,127,163,.07);
+    border-radius: 2px;
+    transition: all .3s;
+    white-space: nowrap;
+    cursor: none;
+  }
+  .cta-msg:hover {
+    background: rgba(58,127,163,.15);
+    border-color: var(--teal);
+    transform: translateY(-2px);
+  }
+
+  /* 2×2 en desktop, 1 col mobile */
   .msgs-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.2rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
     margin-bottom: 2rem;
   }
 
   .mc {
-    background: rgba(255,255,255,.02);
+    background: rgba(255,255,255,.022);
     border: 1px solid rgba(255,255,255,.06);
     border-radius: 4px;
-    padding: 1.3rem;
+    padding: 1.5rem;
     position: relative;
-    transition: border-color .3s, transform .3s;
+    transition: border-color .3s, transform .3s, box-shadow .3s;
   }
   .mc::before {
     content: '"';
     font-family: var(--ship);
-    font-size: 3.5rem;
-    color: rgba(58,127,163,.07);
+    font-size: 4rem;
+    color: rgba(58,127,163,.06);
     position: absolute;
-    top: -.3rem;
-    left: .9rem;
+    top: -.5rem; left: .8rem;
     line-height: 1;
+    pointer-events: none;
   }
   .mc:hover {
-    border-color: rgba(58,127,163,.3);
-    transform: translateY(-2px);
+    border-color: rgba(58,127,163,.32);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 32px rgba(0,0,0,.35);
   }
 
   .mc-txt {
-    font-size: .84rem;
+    font-size: .88rem;
     line-height: 1.85;
     color: var(--wdim);
-    margin-bottom: 1rem;
+    margin-bottom: 1.2rem;
     position: relative;
     z-index: 1;
     display: -webkit-box;
@@ -111,7 +144,7 @@ const sampleMessages = [
 
   .mc-name {
     font-family: var(--ship);
-    font-size: .82rem;
+    font-size: .84rem;
     color: var(--white);
   }
   .mc-country {
@@ -119,17 +152,44 @@ const sampleMessages = [
     font-size: .55rem;
     color: var(--teal);
     letter-spacing: .1em;
-    margin-top: .1rem;
+    margin-top: .15rem;
   }
-  .mc-flag { font-size: 1.05rem; }
   .mc-song {
     font-family: var(--mono);
     font-size: .5rem;
-    color: rgba(167,216,240,.45);
+    color: rgba(167,216,240,.4);
     letter-spacing: .1em;
     border: 1px solid rgba(58,127,163,.18);
-    padding: 2px 5px;
+    padding: 3px 7px;
     border-radius: 2px;
-    margin-top: .3rem;
+    align-self: flex-end;
+    white-space: nowrap;
+  }
+
+  .ms-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .ms-count {
+    font-family: var(--mono);
+    font-size: .58rem;
+    color: var(--wdim);
+    letter-spacing: .15em;
+  }
+  .ms-num {
+    color: var(--teal2);
+    font-size: .75rem;
+    font-weight: 700;
+    margin-right: .3rem;
+  }
+
+  @media (max-width: 640px) {
+    .msgs-grid { grid-template-columns: 1fr; }
+    .ms-header { flex-direction: column; align-items: flex-start; }
+    .cta-msg { width: 100%; justify-content: center; }
   }
 </style>
