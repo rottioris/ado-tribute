@@ -156,3 +156,33 @@ section {
   background: rgba(58,127,163,.08);
   border-color: var(--teal);
 }
+
+
+/* ── Fundido entre secciones — sin líneas visibles ──
+   Todas las secciones comparten el mismo color base (--void / --abyss).
+   Los ::before y ::after crean un fade de 120px que disuelve los bordes.
+   Usar z-index:1 para que queden sobre el contenido de fondo pero
+   no tapen elementos interactivos (z-index:2+). */
+section {
+  isolation: isolate;
+}
+section::before,
+section::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0;
+  height: 120px;
+  pointer-events: none;
+  z-index: 1;
+}
+section::before {
+  top: 0;
+  background: linear-gradient(to bottom, var(--void) 0%, transparent 100%);
+}
+section::after {
+  bottom: 0;
+  background: linear-gradient(to top, var(--void) 0%, transparent 100%);
+}
+
+/* .s-divider ya no se usa — conservar por si acaso pero invisible */
+.s-divider { display: none; }
