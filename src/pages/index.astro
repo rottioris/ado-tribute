@@ -3,7 +3,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Nav from '../components/layout/Nav.astro';
 import Hero from '../components/layout/Hero.astro';
 import Dedicatoria from '../components/layout/Dedicatoria.astro';
-import Timeline from '../components/layout/Timeline.astro';
 import FanartPreview from '../components/fanart/FanartPreview.astro';
 import MessagesPreview from '../components/messages/MessagesPreview.astro';
 import Closing from '../components/layout/Closing.astro';
@@ -12,23 +11,10 @@ import Footer from '../components/layout/Footer.astro';
 
 <BaseLayout>
   <Nav active="home" />
-
   <Hero />
-
-  <div class="s-divider"></div>
   <Dedicatoria />
-
-  <div class="s-divider"></div>
-  <Timeline />
-
-  <div class="s-divider"></div>
   <FanartPreview />
-
-  <div class="s-divider"></div>
   <MessagesPreview />
-
-  <div class="s-divider"></div>
   <Closing />
-
   <Footer />
 </BaseLayout>
