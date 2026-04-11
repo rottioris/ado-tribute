@@ -169,23 +169,28 @@ section {
   z-index: 1; /* Tapa el canvas de burbujas (z-index:0) */
   background: var(--void); /* Fondo sólido que bloquea el canvas */
 }
-section::before,
-section::after {
-  content: '';
-  position: absolute;
-  left: 0; right: 0;
-  height: 120px;
-  pointer-events: none;
-  z-index: 1;
-}
-section::before {
-  top: 0;
-  background: linear-gradient(to bottom, var(--void) 0%, transparent 100%);
-}
-section::after {
-  bottom: 0;
-  background: linear-gradient(to top, var(--void) 0%, transparent 100%);
-}
+/* Fades de sección manejados individualmente por componente
+   para evitar superposición de gradientes que genera línea negra */
 
 /* .s-divider ya no se usa — conservar por si acaso pero invisible */
 .s-divider { display: none; }
+
+  /* Fade de fusión con secciones vecinas */
+  #gracias::before, #gracias::after,
+  #messages-preview::before, #messages-preview::after,
+  #cierre::before, #cierre::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0;
+    height: 100px;
+    pointer-events: none;
+    z-index: 3;
+  }
+  #gracias::before, #messages-preview::before, #cierre::before {
+    top: 0;
+    background: linear-gradient(to bottom, var(--void) 0%, transparent 100%);
+  }
+  #gracias::after, #messages-preview::after, #cierre::after {
+    bottom: 0;
+    background: linear-gradient(to top, var(--void) 0%, transparent 100%);
+  }

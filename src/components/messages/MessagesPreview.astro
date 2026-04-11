@@ -1,52 +1,26 @@
 ---
-const sampleMessages = [
-  { name:'Camila F.', country:'Argentina', flag:'🇦🇷', song:'Kura Kura',
-    text:'Tu música llegó en un momento muy difícil de mi vida y me ayudó a encontrar fuerzas que no sabía que tenía.' },
-  { name:'Santiago B.', country:'México', flag:'🇲🇽', song:'Vivarium',
-    text:'Te vi en el concierto en México y lloré de principio a fin. Tu voz comunica lo que ningún idioma puede.' },
-  { name:'Daniela P.', country:'Colombia', flag:'🇨🇴', song:'Vivarium',
-    text:'Cuando vi el MV de Vivarium, entendí todo. Ese lugar pequeño donde todo empezó y ahora llena estadios.' },
-  { name:'Yuki T.', country:'Japan', flag:'🇯🇵', song:'Tot Musica',
-    text:'アドちゃん、あなたの声は本当に唯一無二。これからもずっと応援しています。' },
-];
+import MessagesCarousel from './MessagesCarousel.tsx';
 ---
 
 <section id="messages-preview">
-  <div class="inner">
+  <div class="ms-fade-top"    aria-hidden="true"></div>
+  <div class="ms-fade-bottom" aria-hidden="true"></div>
+
+  <div class="inner ms-wrap">
 
     <div class="ms-header">
-      <div>
-        <p class="s-label reveal">02 — メッセージ</p>
-        <h2 class="s-title reveal">Mensajes para Ado</h2>
-        <p class="s-sub reveal">Palabras de fans · ファンからのメッセージ</p>
-      </div>
-      <a href="/messages" class="cta-msg reveal">
-        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-        </svg>
-        Dejar mi mensaje
-      </a>
+      <p class="s-label">02 — メッセージ</p>
+      <h2 class="s-title">Mensajes para Ado</h2>
+      <p class="s-sub">Palabras de fans · ファンからのメッセージ</p>
     </div>
 
-    <div class="msgs-grid">
-      {sampleMessages.map((m, i) => (
-        <div class="mc reveal" style={`animation-delay:${i*100}ms`}>
-          <p class="mc-txt">{m.text}</p>
-          <div class="mc-foot">
-            <div>
-              <p class="mc-name">{m.name}</p>
-              <p class="mc-country">{m.flag} {m.country}</p>
-            </div>
-            {m.song && <p class="mc-song">{m.song}</p>}
-          </div>
-        </div>
-      ))}
-    </div>
+    <!-- Carrusel contenido dentro del inner -->
+    <MessagesCarousel client:load />
 
-    <div class="ms-footer reveal">
+    <div class="ms-footer">
       <a href="/messages" class="btn-outline">Ver todos los mensajes →</a>
       <span class="ms-count">
-        <span class="ms-num" id="msCount">—</span> mensajes enviados
+        <span class="ms-num" id="msCount">—</span> mensajes
       </span>
     </div>
 
@@ -54,118 +28,211 @@ const sampleMessages = [
 </section>
 
 <style>
+  /* ── Sección ── */
   #messages-preview {
+    position: relative;
     background: var(--void);
     padding: var(--section-pad) 0;
-  }
-
-  .ms-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: 2.5rem;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-  }
-
-  .cta-msg {
-    display: inline-flex;
-    align-items: center;
-    gap: .55rem;
-    font-family: var(--mono);
-    font-size: .62rem;
-    letter-spacing: .2em;
-    text-transform: uppercase;
-    padding: .85rem 1.8rem;
-    border: 1px solid rgba(58,127,163,.5);
-    color: var(--teal2);
-    background: rgba(58,127,163,.07);
-    border-radius: 2px;
-    transition: all .3s;
-    white-space: nowrap;
-    cursor: none;
-  }
-  .cta-msg:hover {
-    background: rgba(58,127,163,.15);
-    border-color: var(--teal);
-    transform: translateY(-2px);
-  }
-
-  /* 2×2 en desktop, 1 col mobile */
-  .msgs-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-    margin-bottom: 2rem;
-  }
-
-  .mc {
-    background: rgba(255,255,255,.022);
-    border: 1px solid rgba(255,255,255,.06);
-    border-radius: 4px;
-    padding: 1.5rem;
-    position: relative;
-    transition: border-color .3s, transform .3s, box-shadow .3s;
-  }
-  .mc::before {
-    content: '"';
-    font-family: var(--ship);
-    font-size: 4rem;
-    color: rgba(58,127,163,.06);
-    position: absolute;
-    top: -.5rem; left: .8rem;
-    line-height: 1;
-    pointer-events: none;
-  }
-  .mc:hover {
-    border-color: rgba(58,127,163,.32);
-    transform: translateY(-3px);
-    box-shadow: 0 8px 32px rgba(0,0,0,.35);
-  }
-
-  .mc-txt {
-    font-size: .88rem;
-    line-height: 1.85;
-    color: var(--wdim);
-    margin-bottom: 1.2rem;
-    position: relative;
-    z-index: 1;
-    display: -webkit-box;
-    -webkit-line-clamp: 4;
-    -webkit-box-orient: vertical;
     overflow: hidden;
   }
 
-  .mc-foot {
+  .ms-fade-top, .ms-fade-bottom {
+    position: absolute;
+    left: 0; right: 0; height: 100px;
+    pointer-events: none; z-index: 3;
+  }
+  .ms-fade-top    { top: 0;    background: linear-gradient(to bottom, var(--void), transparent); }
+  .ms-fade-bottom { bottom: 0; background: linear-gradient(to top,   var(--void), transparent); }
+
+  .ms-wrap {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+  }
+
+  .ms-header { /* hereda s-label, s-title, s-sub */ }
+
+  /* ── Root del carrusel ── */
+  :global(.mc-root) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    width: 100%;
+  }
+
+  /* Stage con perspectiva 3D */
+  :global(.mc-stage) {
+    position: relative;
+    width: 100%;
+    height: 220px;
+    perspective: 1200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ── Cards base ── */
+  :global(.mc-card) {
+    position: absolute;
+    width: 340px;
+    background: rgba(10,18,32,.7);
+    border: 1px solid rgba(58,127,163,.14);
+    border-radius: 8px;
+    padding: 1.6rem 1.5rem 1.2rem;
+    backdrop-filter: blur(10px);
+    transition:
+      transform .6s cubic-bezier(.25,.46,.45,.94),
+      opacity   .6s ease,
+      filter    .6s ease;
+    will-change: transform, opacity;
+    cursor: default;
+    user-select: none;
+  }
+
+  /* Card activa — centro, plena visibilidad */
+  :global(.mc-card[data-offset="0"]) {
+    transform: translateX(0) translateZ(0) scale(1);
+    opacity: 1;
+    filter: none;
+    z-index: 3;
+    cursor: default;
+    border-color: rgba(58,127,163,.28);
+    background: rgba(12,22,40,.8);
+  }
+
+  /* Cards adyacentes — desplazadas, reducidas, atenuadas */
+  :global(.mc-card[data-offset="1"]),
+  :global(.mc-card[data-offset="-1"]) {
+    opacity: .45;
+    filter: blur(.5px);
+    z-index: 2;
+    cursor: pointer;
+  }
+  :global(.mc-card[data-offset="1"])  { transform: translateX(360px)  translateZ(-80px) scale(.88); }
+  :global(.mc-card[data-offset="-1"]) { transform: translateX(-360px) translateZ(-80px) scale(.88); }
+
+  /* Cards lejanas — casi invisibles */
+  :global(.mc-card[data-offset="2"]),
+  :global(.mc-card[data-offset="-2"]) {
+    opacity: .15;
+    filter: blur(1px);
+    z-index: 1;
+    cursor: pointer;
+  }
+  :global(.mc-card[data-offset="2"])  { transform: translateX(680px)  translateZ(-180px) scale(.76); }
+  :global(.mc-card[data-offset="-2"]) { transform: translateX(-680px) translateZ(-180px) scale(.76); }
+
+  /* Clases extra de offset para React */
+  :global(.mc-card--offset-n2) { transform: translateX(-680px) translateZ(-180px) scale(.76); opacity:.15; filter:blur(1px); z-index:1; cursor:pointer; }
+  :global(.mc-card--offset-n1) { transform: translateX(-360px) translateZ(-80px)  scale(.88); opacity:.45; filter:blur(.5px); z-index:2; cursor:pointer; }
+  :global(.mc-card--offset-p0) { transform: translateX(0)      translateZ(0)      scale(1);   opacity:1;   filter:none;      z-index:3; border-color:rgba(58,127,163,.28); background:rgba(12,22,40,.8); }
+  :global(.mc-card--offset-p1) { transform: translateX(360px)  translateZ(-80px)  scale(.88); opacity:.45; filter:blur(.5px); z-index:2; cursor:pointer; }
+  :global(.mc-card--offset-p2) { transform: translateX(680px)  translateZ(-180px) scale(.76); opacity:.15; filter:blur(1px); z-index:1; cursor:pointer; }
+
+  /* ── Contenido de la card ── */
+  :global(.mc-quote) {
+    font-family: var(--ship);
+    font-size: 4rem;
+    color: rgba(58,127,163,.1);
+    position: absolute;
+    top: -.3rem; left: .8rem;
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  :global(.mc-text) {
+    font-family: var(--ship);
+    font-size: .87rem;
+    line-height: 1.85;
+    color: rgba(220,238,250,.65);
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin-bottom: 1.1rem;
+    position: relative;
+    z-index: 1;
+    font-style: italic;
+  }
+
+  :global(.mc-footer) {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
+    gap: .5rem;
   }
-
-  .mc-name {
+  :global(.mc-author) { display: flex; flex-direction: column; gap: .15rem; }
+  :global(.mc-name) {
     font-family: var(--ship);
     font-size: .84rem;
     color: var(--white);
   }
-  .mc-country {
-    font-family: var(--mono);
-    font-size: .55rem;
-    color: var(--teal);
-    letter-spacing: .1em;
-    margin-top: .15rem;
-  }
-  .mc-song {
+  :global(.mc-country) {
     font-family: var(--mono);
     font-size: .5rem;
-    color: rgba(167,216,240,.4);
+    color: rgba(58,127,163,.7);
+    letter-spacing: .12em;
+    text-transform: uppercase;
+  }
+  :global(.mc-song) {
+    font-family: var(--mono);
+    font-size: .48rem;
+    color: rgba(167,216,240,.38);
     letter-spacing: .1em;
-    border: 1px solid rgba(58,127,163,.18);
+    border: 1px solid rgba(58,127,163,.15);
     padding: 3px 7px;
     border-radius: 2px;
-    align-self: flex-end;
     white-space: nowrap;
+    align-self: flex-end;
   }
 
+  /* ── Navegación ── */
+  :global(.mc-nav) {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  :global(.mc-btn) {
+    width: 36px; height: 36px;
+    border: 1px solid rgba(58,127,163,.25);
+    border-radius: 50%;
+    background: rgba(10,18,32,.6);
+    color: var(--teal2);
+    display: flex; align-items: center; justify-content: center;
+    cursor: none;
+    transition: border-color .3s, background .3s;
+    flex-shrink: 0;
+  }
+  :global(.mc-btn:hover) {
+    border-color: rgba(58,127,163,.6);
+    background: rgba(58,127,163,.1);
+  }
+
+  :global(.mc-dots) {
+    display: flex;
+    gap: .5rem;
+    align-items: center;
+  }
+  :global(.mc-dot) {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: rgba(58,127,163,.25);
+    border: none;
+    cursor: none;
+    transition: background .3s, transform .3s;
+    padding: 0;
+  }
+  :global(.mc-dot--active) {
+    background: var(--teal);
+    transform: scale(1.4);
+  }
+
+  /* ── Footer sección ── */
   .ms-footer {
     display: flex;
     justify-content: space-between;
@@ -173,7 +240,6 @@ const sampleMessages = [
     flex-wrap: wrap;
     gap: 1rem;
   }
-
   .ms-count {
     font-family: var(--mono);
     font-size: .58rem;
@@ -187,9 +253,12 @@ const sampleMessages = [
     margin-right: .3rem;
   }
 
-  @media (max-width: 640px) {
-    .msgs-grid { grid-template-columns: 1fr; }
-    .ms-header { flex-direction: column; align-items: flex-start; }
-    .cta-msg { width: 100%; justify-content: center; }
+  @media (max-width: 768px) {
+    :global(.mc-stage) { height: 260px; }
+    :global(.mc-card)  { width: 280px; }
+    :global(.mc-card[data-offset="1"])  { transform: translateX(300px)  translateZ(-60px) scale(.85); }
+    :global(.mc-card[data-offset="-1"]) { transform: translateX(-300px) translateZ(-60px) scale(.85); }
+    :global(.mc-card[data-offset="2"]),
+    :global(.mc-card[data-offset="-2"]) { opacity: 0; pointer-events: none; }
   }
 </style>

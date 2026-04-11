@@ -4,6 +4,10 @@ import FanartScroller from './FanartScroller.tsx';
 
 <section id="fanart-preview">
 
+  <!-- Fades de fusión con secciones vecinas — z-index alto, no rotan -->
+  <div class="fa-fade-top"    aria-hidden="true"></div>
+  <div class="fa-fade-bottom" aria-hidden="true"></div>
+
   <!-- Fondo animado inclinado -->
   <div class="fa-bg" aria-hidden="true">
     <div class="fa-stage">
@@ -72,41 +76,21 @@ import FanartScroller from './FanartScroller.tsx';
   }
 
   /* ── Overlay ──
-     Cubre esquinas con negro sólido + radial central + fade top/bottom
+     Sin gradientes de esquina — estos causaban la línea negra
+     al superponerse con el fade global de section::before/after.
+     Solo radial central para legibilidad del texto.
+     El corte de esquinas lo hace overflow:hidden de #fanart-preview.
   */
   .fa-overlay {
     position: absolute;
-    /* El overlay NO rota — cubre el viewport original */
-    inset: 220px 80px;    /* Compensa el inset del padre para quedar en posición real */
-    transform: rotate(12deg); /* Contrarrota para quedar horizontal */
+    inset: 220px 80px;
+    transform: rotate(12deg);
     transform-origin: center center;
-
-    background:
-      /* Esquinas negras sólidas — método más confiable */
-      linear-gradient(135deg, var(--void) 12%, transparent 32%),
-      linear-gradient(225deg, var(--void) 12%, transparent 32%),
-      linear-gradient(315deg, var(--void) 12%, transparent 32%),
-      linear-gradient( 45deg, var(--void) 12%, transparent 32%),
-      /* Oscuro central para texto encima */
-      radial-gradient(ellipse 65% 55% at 50% 50%,
-        rgba(4,5,10,.48) 0%,
-        rgba(4,5,10,.78) 100%
-      );
-
-    /* Fade top/bottom para fundirse con secciones vecinas */
-    -webkit-mask-image: linear-gradient(
-      to bottom,
-      transparent  0%,
-      black        14%,
-      black        86%,
-      transparent 100%
-    );
-    mask-image: linear-gradient(
-      to bottom,
-      transparent  0%,
-      black        14%,
-      black        86%,
-      transparent 100%
+    /* Solo oscuro central — sin gradientes de esquina */
+    background: radial-gradient(
+      ellipse 70% 60% at 50% 50%,
+      rgba(4,5,10,.42) 0%,
+      rgba(4,5,10,.72) 100%
     );
   }
 
@@ -138,6 +122,27 @@ import FanartScroller from './FanartScroller.tsx';
     font-size: .75rem;
     font-weight: 700;
     margin-right: .3rem;
+  }
+
+  /* ── Fades de fusión ──
+     Capas independientes, z-index:3, encima de todo.
+     Altura generosa (100px) para que el fundido sea suave.
+     No usan section::before/after para evitar superposición. */
+  .fa-fade-top,
+  .fa-fade-bottom {
+    position: absolute;
+    left: 0; right: 0;
+    height: 100px;
+    pointer-events: none;
+    z-index: 3;
+  }
+  .fa-fade-top {
+    top: 0;
+    background: linear-gradient(to bottom, var(--void) 0%, transparent 100%);
+  }
+  .fa-fade-bottom {
+    bottom: 0;
+    background: linear-gradient(to top, var(--void) 0%, transparent 100%);
   }
 
   @media (max-width: 768px) {
