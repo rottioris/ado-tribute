@@ -1,0 +1,87 @@
+---
+/**
+ * FanartCarousel — Scroll automático con imágenes a 40°
+ * ─────────────────────────────────────────────────────
+ * ESTADO: Pendiente de conexión con Supabase
+ *
+ * CUANDO ACTIVAR:
+ *   1. Supabase configurado (src/lib/supabase.ts)
+ *   2. Tabla `fanarts` creada con columna `image_url`
+ *   3. Descomentar import en FanartPreview.astro
+ *
+ * INTERFAZ ESPERADA:
+ */
+import type { Fanart } from '../../types/fanart';
+
+export interface Props {
+  fanarts: Fanart[];
+}
+
+const { fanarts = [] } = Astro.props;
+
+// No renderiza nada hasta estar activado
+if (fanarts.length === 0) return;
+---
+
+<!--
+  TODO: Implementar cuando Supabase esté listo.
+
+  DISEÑO PLANEADO:
+  ┌──────────────────────────────────────────────────────┐
+  │  Strip horizontal de imágenes rotadas 40deg           │
+  │  Auto-scroll continuo (CSS animation + JS pause)     │
+  │  Al hover: pausa + card se endereza levemente        │
+  │  Duplicar array para loop infinito sin salto          │
+  └──────────────────────────────────────────────────────┘
+
+  IMPLEMENTACIÓN TÉCNICA:
+  - Contenedor overflow:hidden con height fija (~420px)
+  - Flex row con gap
+  - Cada img: transform rotate(-40deg) + translateY variable
+    para efecto de "cascada" escalonada
+  - @keyframes scrollX: translateX(0) → translateX(-50%)
+    (array duplicado = loop perfecto sin salto)
+  - IntersectionObserver: animation-play-state pause/running
+  - Datos: props.fanarts.map(f => f.image_url)
+
+  QUERY SUPABASE (en index.astro):
+  const { data: fanarts } = await supabase
+    .from('fanarts')
+    .select('id, image_url, title, artist_handle, created_at')
+    .eq('approved', true)
+    .order('created_at', { ascending: false })
+    .limit(30);
+-->
+
+<style>
+  /* Reservado para cuando se active */
+  .fanart-carousel {
+    width: 100%;
+    height: 420px;
+    overflow: hidden;
+    position: relative;
+    margin: 2rem 0;
+  }
+  .carousel-track {
+    display: flex;
+    gap: 1.2rem;
+    height: 100%;
+    /* Se animará con translateX */
+  }
+  .carousel-item {
+    flex-shrink: 0;
+    transform: rotate(-40deg) translateY(60px);
+    transform-origin: bottom center;
+    transition: transform .4s ease;
+  }
+  .carousel-item:hover {
+    transform: rotate(-20deg) translateY(30px);
+  }
+  .carousel-item img {
+    height: 340px;
+    width: auto;
+    border-radius: 4px;
+    border: 1px solid rgba(58,127,163,.2);
+    object-fit: cover;
+  }
+</style>
