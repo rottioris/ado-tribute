@@ -165,6 +165,9 @@ section {
    no tapen elementos interactivos (z-index:2+). */
 section {
   isolation: isolate;
+  position: relative;
+  z-index: 1; /* Tapa el canvas de burbujas (z-index:0) */
+  background: var(--void); /* Fondo sólido que bloquea el canvas */
 }
 section::before,
 section::after {
