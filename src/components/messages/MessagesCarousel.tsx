@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 
 interface Message {
   id: string;
@@ -20,112 +20,68 @@ function sampleMessages(): Message[] {
     { id:'m6',  name:'Sofía R.',    country:'Perú',        flag:'🇵🇪', favorite_song:'Gira Gira',   text:'Ado llegó a mi vida como una tormenta — de repente y sin pedir permiso. Perú te ama.' },
     { id:'m7',  name:'Tomoko H.',   country:'Japan',       flag:'🇯🇵', favorite_song:'Kura Kura',   text:'くらくらの歌詞が大好きです。アドさんの声は私の心の奥深くに届きます。' },
     { id:'m8',  name:'Fernanda L.', country:'Chile',       flag:'🇨🇱', favorite_song:'Gira Gira',   text:'Ado, tu música fue lo que me hizo interesarme en el japonés. Eres mi mayor motivación.' },
-    { id:'m9',  name:'Min-jun L.',  country:'South Korea', flag:'🇰🇷', favorite_song:'New Genesis', text:'Ado의 목소리는 정말 특별합니다. 당신의 음악 덕분에 매일이 조금 더 밝아집니다.' },
+    { id:'m9',  name:'Min-jun L.',  country:'Korea',       flag:'🇰🇷', favorite_song:'New Genesis', text:'Ado의 목소리는 정말 특별합니다. 당신의 음악 덕분에 매일이 조금 더 밝아집니다.' },
   ];
 }
 
+function Card({ msg }: {
+  msg: Message;
+}) {
+  return (
+    <div className="mc-card">
+      {/* Comilla decorativa grande en teal */}
+      <div className="mc-quote">"</div>
+      <p className="mc-text">{msg.text}</p>
+      <div className="mc-footer">
+        <div className="mc-author">
+          <span className="mc-name">{msg.name}</span>
+          <span className="mc-country">{msg.flag} {msg.country}</span>
+        </div>
+        {msg.favorite_song && (
+          <span className="mc-song">{msg.favorite_song}</span>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function MessagesCarousel() {
-  const [messages]        = useState<Message[]>(sampleMessages);
-  const [active, setActive] = useState(0);
-  const [prev,   setPrev]   = useState<number | null>(null);
-  const [dir,    setDir]    = useState<'next' | 'prev'>('next');
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const trackRef  = useRef<HTMLDivElement>(null);
+  const [paused, setPaused] = useState(false);
 
-  const total = messages.length;
-
-  function goTo(idx: number, direction: 'next' | 'prev') {
-    setPrev(active);
-    setDir(direction);
-    setActive(idx);
-  }
-
-  function next() { goTo((active + 1) % total, 'next'); }
-  function back() { goTo((active - 1 + total) % total, 'prev'); }
-
-  // Auto-avance cada 5s
-  function startTimer() {
-    if (timerRef.current) clearInterval(timerRef.current);
-    timerRef.current = setInterval(() => {
-      setActive(a => {
-        setPrev(a);
-        setDir('next');
-        return (a + 1) % total;
-      });
-    }, 5000);
-  }
+  // TODO — Supabase:
+  // const [messages, setMessages] = useState<Message[]>([]);
+  // useEffect(() => {
+  //   supabase.from('messages')
+  //     .select('id,name,country,flag,text,favorite_song')
+  //     .order('created_at', { ascending: false })
+  //     .limit(20)
+  //     .then(({ data }) => setMessages(data ?? []));
+  // }, []);
+  const messages = sampleMessages();
 
   useEffect(() => {
-    startTimer();
-    return () => { if (timerRef.current) clearInterval(timerRef.current); };
-  }, [total]);
+    const track = trackRef.current;
+    if (!track) return;
+    track.style.animationPlayState = paused ? 'paused' : 'running';
+  }, [paused]);
 
-  // Reiniciar timer al navegar manualmente
-  function manualNext() { next(); startTimer(); }
-  function manualBack() { back(); startTimer(); }
-
-  const msg = messages[active];
-
-  // Mostrar card activa + las 2 a cada lado (ghost cards)
-  const visible = [-2, -1, 0, 1, 2].map(offset => {
-    const idx = (active + offset + total) % total;
-    return { idx, offset, msg: messages[idx] };
-  });
+  // Duplicar para loop infinito
+  const doubled = [...messages, ...messages];
 
   return (
-    <div className="mc-root">
-      {/* Cards */}
-      <div className="mc-stage">
-        {visible.map(({ idx, offset, msg: m }) => (
-          <div
-            key={idx}
-            className={`mc-card mc-card--offset-${offset < 0 ? 'n' : 'p'}${Math.abs(offset)}`}
-            data-offset={offset}
-            onClick={() => {
-              if (offset !== 0) {
-                offset > 0 ? manualNext() : manualBack();
-              }
-            }}
-          >
-            <span className="mc-quote">"</span>
-            <p className="mc-text">{m.text}</p>
-            <div className="mc-footer">
-              <div className="mc-author">
-                <span className="mc-name">{m.name}</span>
-                <span className="mc-country">{m.flag} {m.country}</span>
-              </div>
-              {m.favorite_song && (
-                <span className="mc-song">{m.favorite_song}</span>
-              )}
-            </div>
-          </div>
+    <div
+      className="mc-root"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+    >
+      <div className="mc-track" ref={trackRef}>
+        {doubled.map((msg, i) => (
+          <Card
+            key={`${msg.id}-${i}`}
+            msg={msg}
+          />
         ))}
-      </div>
-
-      {/* Navegación */}
-      <div className="mc-nav">
-        <button className="mc-btn" onClick={manualBack} aria-label="Anterior">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5">
-            <path d="M15 18l-6-6 6-6"/>
-          </svg>
-        </button>
-
-        {/* Dots */}
-        <div className="mc-dots">
-          {messages.map((_, i) => (
-            <button
-              key={i}
-              className={`mc-dot${i === active ? ' mc-dot--active' : ''}`}
-              onClick={() => { goTo(i, i > active ? 'next' : 'prev'); startTimer(); }}
-              aria-label={`Mensaje ${i + 1}`}
-            />
-          ))}
-        </div>
-
-        <button className="mc-btn" onClick={manualNext} aria-label="Siguiente">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5">
-            <path d="M9 18l6-6-6-6"/>
-          </svg>
-        </button>
       </div>
     </div>
   );
