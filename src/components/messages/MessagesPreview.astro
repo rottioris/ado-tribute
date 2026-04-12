@@ -6,179 +6,194 @@ import MessagesCarousel from './MessagesCarousel.tsx';
   <div class="ms-fade-top"    aria-hidden="true"></div>
   <div class="ms-fade-bottom" aria-hidden="true"></div>
 
-  <div class="inner ms-wrap">
-
-    <div class="ms-header">
-      <p class="s-label">02 — メッセージ</p>
-      <h2 class="s-title">Mensajes para Ado</h2>
-      <p class="s-sub">Palabras de fans · ファンからのメッセージ</p>
-    </div>
-
-    <!-- Carrusel contenido dentro del inner -->
-    <MessagesCarousel client:load />
-
-    <div class="ms-footer">
-      <a href="/messages" class="btn-outline">Ver todos los mensajes →</a>
-      <span class="ms-count">
-        <span class="ms-num" id="msCount">—</span> mensajes
-      </span>
-    </div>
-
+  <div class="inner">
+    <p class="s-label reveal">02 — メッセージ</p>
+    <h2 class="s-title reveal">Mensajes para Ado</h2>
+    <p class="s-sub reveal">Palabras de fans · ファンからのメッセージ</p>
   </div>
+
+  <!-- Ticker contenido dentro del ancho de la página -->
+  <div class="inner ms-ticker-outer">
+    <div class="ms-ticker-wrap">
+      <MessagesCarousel client:load />
+      <div class="ms-fade-left"  aria-hidden="true"></div>
+      <div class="ms-fade-right" aria-hidden="true"></div>
+    </div>
+  </div>
+
+  <div class="inner ms-footer reveal">
+    <a href="/messages" class="btn-outline">Ver todos los mensajes →</a>
+    <span class="ms-count">
+      <span class="ms-num" id="msCount">—</span> mensajes
+    </span>
+  </div>
+
 </section>
 
 <style>
+  @keyframes mc-ticker {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+
   /* ── Sección ── */
   #messages-preview {
     position: relative;
     background: var(--void);
     padding: var(--section-pad) 0;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
   }
 
+  /* Fades top/bottom */
   .ms-fade-top, .ms-fade-bottom {
     position: absolute;
-    left: 0; right: 0; height: 100px;
+    left: 0; right: 0; height: 90px;
     pointer-events: none; z-index: 3;
   }
   .ms-fade-top    { top: 0;    background: linear-gradient(to bottom, var(--void), transparent); }
   .ms-fade-bottom { bottom: 0; background: linear-gradient(to top,   var(--void), transparent); }
 
-  .ms-wrap {
+  /* ── Ticker outer ──
+     Técnica definitiva para clip horizontal sin cortar Y:
+     - ms-ticker-outer: margen negativo que "expande" el contenedor
+       más allá del inner, luego padding lo compensa visualmente
+     - ms-ticker-wrap: overflow:hidden solo en este nivel,
+       con padding vertical suficiente para el scale hover
+     De esta forma overflow:hidden ve el padding como espacio
+     y no corta el scale(1.03) de las cards.
+  */
+  .ms-ticker-outer {
+    /* overflow:hidden aquí corta horizontal */
+    overflow: hidden;
+    padding: 0 !important;
+  }
+  .ms-ticker-wrap {
     position: relative;
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
-    gap: 3rem;
+    width: 100%;
+    /* Padding vertical: espacio para scale(1.03) — calculado:
+       card height ~180px × 0.03 = ~6px, con margen: 20px */
+    padding: 20px 0;
+    overflow: visible;
   }
 
-  .ms-header { /* hereda s-label, s-title, s-sub */ }
-
-  /* ── Root del carrusel ── */
-  :global(.mc-root) {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2rem;
+  /* React root y track — overflow visible en toda la cadena */
+  .ms-ticker-wrap :global(.mc-root),
+  .ms-ticker-wrap :global(.mc-track) {
+    overflow: visible;
+  }
+  .ms-ticker-wrap :global(.mc-root) {
     width: 100%;
   }
 
-  /* Stage con perspectiva 3D */
-  :global(.mc-stage) {
-    position: relative;
-    width: 100%;
-    height: 220px;
-    perspective: 1200px;
+  /* Track — animación continua */
+  .ms-ticker-wrap :global(.mc-track) {
     display: flex;
-    align-items: center;
-    justify-content: center;
+    gap: 1.2rem;
+    width: max-content;
+    animation: mc-ticker 60s linear infinite;
   }
 
-  /* ── Cards base ── */
-  :global(.mc-card) {
-    position: absolute;
-    width: 340px;
-    background: rgba(10,18,32,.7);
-    border: 1px solid rgba(58,127,163,.14);
+  /* ── Card ── */
+  .ms-ticker-wrap :global(.mc-card) {
+    width: 320px;
+    flex-shrink: 0;
+    position: relative;
+    background: rgba(10,18,32,.65);
+    border: 1px solid rgba(58,127,163,.13);
     border-radius: 8px;
-    padding: 1.6rem 1.5rem 1.2rem;
+    padding: 2rem 1.5rem 1.3rem;
     backdrop-filter: blur(10px);
+    /* Transición suave al hacer hover */
     transition:
-      transform .6s cubic-bezier(.25,.46,.45,.94),
-      opacity   .6s ease,
-      filter    .6s ease;
-    will-change: transform, opacity;
+      border-color .4s ease,
+      background   .4s ease,
+      box-shadow   .4s ease,
+      transform    .4s cubic-bezier(.25,.46,.45,.94);
     cursor: default;
-    user-select: none;
+    overflow: hidden;
   }
 
-  /* Card activa — centro, plena visibilidad */
-  :global(.mc-card[data-offset="0"]) {
-    transform: translateX(0) translateZ(0) scale(1);
-    opacity: 1;
-    filter: none;
-    z-index: 3;
-    cursor: default;
-    border-color: rgba(58,127,163,.28);
-    background: rgba(12,22,40,.8);
+  /* Hover: se agranda levemente y glow teal */
+  .ms-ticker-wrap :global(.mc-card:hover) {
+    border-color: rgba(58,127,163,.45);
+    background: rgba(12,24,44,.88);
+    box-shadow:
+      0 0 32px rgba(58,127,163,.12),
+      0 8px 32px rgba(0,0,0,.4);
+    transform: scale(1.03);
+    z-index: 5;
   }
 
-  /* Cards adyacentes — desplazadas, reducidas, atenuadas */
-  :global(.mc-card[data-offset="1"]),
-  :global(.mc-card[data-offset="-1"]) {
-    opacity: .45;
-    filter: blur(.5px);
-    z-index: 2;
-    cursor: pointer;
-  }
-  :global(.mc-card[data-offset="1"])  { transform: translateX(360px)  translateZ(-80px) scale(.88); }
-  :global(.mc-card[data-offset="-1"]) { transform: translateX(-360px) translateZ(-80px) scale(.88); }
-
-  /* Cards lejanas — casi invisibles */
-  :global(.mc-card[data-offset="2"]),
-  :global(.mc-card[data-offset="-2"]) {
-    opacity: .15;
-    filter: blur(1px);
-    z-index: 1;
-    cursor: pointer;
-  }
-  :global(.mc-card[data-offset="2"])  { transform: translateX(680px)  translateZ(-180px) scale(.76); }
-  :global(.mc-card[data-offset="-2"]) { transform: translateX(-680px) translateZ(-180px) scale(.76); }
-
-  /* Clases extra de offset para React */
-  :global(.mc-card--offset-n2) { transform: translateX(-680px) translateZ(-180px) scale(.76); opacity:.15; filter:blur(1px); z-index:1; cursor:pointer; }
-  :global(.mc-card--offset-n1) { transform: translateX(-360px) translateZ(-80px)  scale(.88); opacity:.45; filter:blur(.5px); z-index:2; cursor:pointer; }
-  :global(.mc-card--offset-p0) { transform: translateX(0)      translateZ(0)      scale(1);   opacity:1;   filter:none;      z-index:3; border-color:rgba(58,127,163,.28); background:rgba(12,22,40,.8); }
-  :global(.mc-card--offset-p1) { transform: translateX(360px)  translateZ(-80px)  scale(.88); opacity:.45; filter:blur(.5px); z-index:2; cursor:pointer; }
-  :global(.mc-card--offset-p2) { transform: translateX(680px)  translateZ(-180px) scale(.76); opacity:.15; filter:blur(1px); z-index:1; cursor:pointer; }
-
-  /* ── Contenido de la card ── */
-  :global(.mc-quote) {
-    font-family: var(--ship);
-    font-size: 4rem;
-    color: rgba(58,127,163,.1);
+  /* Comilla decorativa — grande, teal, protagonista */
+  .ms-ticker-wrap :global(.mc-quote) {
     position: absolute;
-    top: -.3rem; left: .8rem;
+    top: -.6rem;
+    left: .9rem;
+    font-family: var(--ship);
+    font-size: 6rem;
     line-height: 1;
+    color: var(--teal);
+    opacity: .18;
     pointer-events: none;
     user-select: none;
+    transition: opacity .4s ease;
+  }
+  .ms-ticker-wrap :global(.mc-card:hover .mc-quote) {
+    opacity: .32;
   }
 
-  :global(.mc-text) {
+  /* Texto */
+  .ms-ticker-wrap :global(.mc-text) {
     font-family: var(--ship);
-    font-size: .87rem;
+    font-size: .88rem;
     line-height: 1.85;
-    color: rgba(220,238,250,.65);
+    color: rgba(220,238,250,.62);
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    margin-bottom: 1.1rem;
+    margin-bottom: 1.2rem;
     position: relative;
     z-index: 1;
     font-style: italic;
+    transition: color .4s ease;
+  }
+  .ms-ticker-wrap :global(.mc-card:hover .mc-text) {
+    color: rgba(220,238,250,.85);
   }
 
-  :global(.mc-footer) {
+  /* Footer */
+  .ms-ticker-wrap :global(.mc-footer) {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
     gap: .5rem;
   }
-  :global(.mc-author) { display: flex; flex-direction: column; gap: .15rem; }
-  :global(.mc-name) {
+  .ms-ticker-wrap :global(.mc-author) {
+    display: flex;
+    flex-direction: column;
+    gap: .2rem;
+  }
+  .ms-ticker-wrap :global(.mc-name) {
     font-family: var(--ship);
     font-size: .84rem;
     color: var(--white);
+    transition: color .4s ease;
   }
-  :global(.mc-country) {
+  .ms-ticker-wrap :global(.mc-card:hover .mc-name) {
+    color: var(--teal2);
+  }
+  .ms-ticker-wrap :global(.mc-country) {
     font-family: var(--mono);
     font-size: .5rem;
-    color: rgba(58,127,163,.7);
+    color: rgba(58,127,163,.65);
     letter-spacing: .12em;
     text-transform: uppercase;
   }
-  :global(.mc-song) {
+  .ms-ticker-wrap :global(.mc-song) {
     font-family: var(--mono);
     font-size: .48rem;
     color: rgba(167,216,240,.38);
@@ -188,51 +203,23 @@ import MessagesCarousel from './MessagesCarousel.tsx';
     border-radius: 2px;
     white-space: nowrap;
     align-self: flex-end;
+    transition: border-color .4s ease, color .4s ease;
+  }
+  .ms-ticker-wrap :global(.mc-card:hover .mc-song) {
+    border-color: rgba(58,127,163,.35);
+    color: rgba(167,216,240,.65);
   }
 
-  /* ── Navegación ── */
-  :global(.mc-nav) {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
+  /* Fades laterales — las cards emergen del fondo */
+  .ms-fade-left, .ms-fade-right {
+    position: absolute;
+    top: 0; bottom: 0; width: 80px;
+    pointer-events: none; z-index: 2;
   }
+  .ms-fade-left  { left:  0; background: linear-gradient(to right, var(--void), transparent); }
+  .ms-fade-right { right: 0; background: linear-gradient(to left,  var(--void), transparent); }
 
-  :global(.mc-btn) {
-    width: 36px; height: 36px;
-    border: 1px solid rgba(58,127,163,.25);
-    border-radius: 50%;
-    background: rgba(10,18,32,.6);
-    color: var(--teal2);
-    display: flex; align-items: center; justify-content: center;
-    cursor: none;
-    transition: border-color .3s, background .3s;
-    flex-shrink: 0;
-  }
-  :global(.mc-btn:hover) {
-    border-color: rgba(58,127,163,.6);
-    background: rgba(58,127,163,.1);
-  }
-
-  :global(.mc-dots) {
-    display: flex;
-    gap: .5rem;
-    align-items: center;
-  }
-  :global(.mc-dot) {
-    width: 5px; height: 5px;
-    border-radius: 50%;
-    background: rgba(58,127,163,.25);
-    border: none;
-    cursor: none;
-    transition: background .3s, transform .3s;
-    padding: 0;
-  }
-  :global(.mc-dot--active) {
-    background: var(--teal);
-    transform: scale(1.4);
-  }
-
-  /* ── Footer sección ── */
+  /* Footer sección */
   .ms-footer {
     display: flex;
     justify-content: space-between;
@@ -251,14 +238,5 @@ import MessagesCarousel from './MessagesCarousel.tsx';
     font-size: .75rem;
     font-weight: 700;
     margin-right: .3rem;
-  }
-
-  @media (max-width: 768px) {
-    :global(.mc-stage) { height: 260px; }
-    :global(.mc-card)  { width: 280px; }
-    :global(.mc-card[data-offset="1"])  { transform: translateX(300px)  translateZ(-60px) scale(.85); }
-    :global(.mc-card[data-offset="-1"]) { transform: translateX(-300px) translateZ(-60px) scale(.85); }
-    :global(.mc-card[data-offset="2"]),
-    :global(.mc-card[data-offset="-2"]) { opacity: 0; pointer-events: none; }
   }
 </style>
